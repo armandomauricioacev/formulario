@@ -25,7 +25,7 @@
     (function() {
       // Solo ejecuta este script si la página actual NO es la de inicio.
       // Así evitamos bucles de redirección.
-      if (window.location.pathname !== '/inicio' && window.location.pathname !== '/') {
+      if (window.location.pathname !== '/solicitud-servicios' && window.location.pathname !== '/') {
         
         if (window.history && window.history.pushState) {
           // Agrega una entrada en el historial. Esto es clave para que el evento 'popstate' se active
@@ -38,7 +38,7 @@
             // En lugar de la alerta, redirigimos a la página de inicio.
             // Usamos location.replace() para que esta acción no quede en el historial,
             // evitando que el usuario pueda usar "adelante" para volver.
-            window.location.replace("{{ route('inicio') }}");
+            window.location.replace("{{ route('solicitud-servicios') }}");
           });
         }
       }
