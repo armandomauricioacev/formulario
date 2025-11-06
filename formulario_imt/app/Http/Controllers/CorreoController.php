@@ -80,18 +80,18 @@ class CorreoController extends Controller
         if ($esOtro) {
             $defaults['solicitante'] = [
                 'titulo' => '¡Hemos recibido tu solicitud!',
-                'cuerpo' => "Le daremos seguimiento a tu servicio que requieres del Instituto Mexicano del Transporte. Espera hasta que nosotros nos comuniquemos contigo por este medio.",
+                'cuerpo' => "Hola @{{solicitante.nombre_completo}},\nHemos recibido tu solicitud para el servicio \"@{{servicio.nombre}}\".\nLe daremos seguimiento desde el Instituto Mexicano del Transporte y nos pondremos en contacto contigo a la brevedad por este medio.",
                 'despedida' => 'Saludos cordiales, Instituto Mexicano del Transporte',
             ];
 
             $cuerpoRep =
-                "Hola, " . (($coordinacion->representante ?? '') ?: 'representante') . ", espero te encuentres muy bien.\n" .
+                "Hola " . (($coordinacion->representante ?? '') ?: 'representante') . ", espero te encuentres muy bien.\n" .
                 "Se ha seleccionado el servicio \"" . ($sol->servicio_otro ?? '') . "\" que no está en nuestro catálogo. Favor de revisarlo y atenderlo a la brevedad.\n\n" .
                 "Información del solicitante:\n" .
                 "Nombre: " . ($sol->nombres ?? '') . "\n" .
                 "Apellido Paterno: " . ($sol->apellido_paterno ?? '') . "\n" .
                 "Apellido Materno: " . ($sol->apellido_materno ?? '') . "\n" .
-                "Entidad: " . ($entidadNombre ?? '') . "\n" .
+                "Entidad de procedencia: " . ($entidadNombre ?? '') . "\n" .
                 "Teléfono: " . ($sol->telefono ?? '') . "\n" .
                 "Correo: " . ($sol->correo_electronico ?? '') . "\n" .
                 "Motivo: " . ($sol->motivo_solicitud ?? '');
