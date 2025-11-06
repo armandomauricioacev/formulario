@@ -7,12 +7,11 @@ use Illuminate\Support\Facades\DB;
 class ServiciosController extends Controller
 {
     /**
-     * Devuelve servicios activos en formato JSON.
+     * Devuelve servicios en formato JSON.
      */
     public function index()
     {
         $servicios = DB::table('servicios')
-            ->where('activo', 1)
             ->orderBy('nombre', 'asc')
             ->get(['id', 'nombre', 'coordinacion_predeterminada_id']);
 

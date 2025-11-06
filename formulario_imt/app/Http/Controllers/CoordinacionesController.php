@@ -7,12 +7,11 @@ use Illuminate\Support\Facades\DB;
 class CoordinacionesController extends Controller
 {
     /**
-     * Devuelve coordinaciones activas en formato JSON.
+     * Devuelve coordinaciones en formato JSON.
      */
     public function index()
     {
         $coordinaciones = DB::table('coordinaciones')
-            ->where('activo', 1)
             ->orderBy('nombre', 'asc')
             ->get(['id', 'nombre']);
 

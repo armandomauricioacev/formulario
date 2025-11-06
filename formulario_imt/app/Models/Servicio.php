@@ -12,8 +12,6 @@ class Servicio extends Model
     protected $fillable = [
         'nombre',
         'coordinacion_predeterminada_id',
-        'descripcion',
-        'activo',
         'fecha_creacion',
     ];
 }

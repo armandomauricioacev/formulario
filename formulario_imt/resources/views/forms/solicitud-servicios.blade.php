@@ -1,6 +1,6 @@
 @extends('forms.layouts.base')
 
-@section('title', 'PAGA IMT')
+@section('title', 'Servicios IMT')
 
 @section('content')
   <style>
@@ -8,6 +8,7 @@
     :root {
       --gob-rojo: #611232;
       --gob-dorado: #a57f2c;
+      --gob-azul: #1E88E5; /* Azul de enfoque accesible */
       --color-error: #a94442;
       --color-texto-secundario: #666;
     }
@@ -67,6 +68,15 @@
       margin-bottom: 20px;
     }
 
+    /* Forzar visualmente mayúsculas en campos configurados */
+    .to-uppercase {
+      text-transform: uppercase;
+    }
+    /* Mantener los placeholders con su capitalización original */
+    .to-uppercase::placeholder {
+      text-transform: none;
+    }
+
     label {
       font-weight: 600;
       margin-bottom: 8px;
@@ -91,10 +101,24 @@
       transition: border-color 0.3s ease;
     }
 
-    .form-control:focus {
-      border-color: var(--gob-rojo);
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(97, 18, 50, 0.1);
+    /* Enfoque azul clásico Bootstrap 3 (efecto idéntico al CDN) */
+    .form-control:focus,
+    .form-control:focus-visible {
+      border-color: #66afe9;
+      outline: 0;
+      box-shadow:
+        inset 0 1px 1px rgba(0,0,0,.075),
+        0 0 8px rgba(102,175,233,.6);
+    }
+
+    /* Aplicar el mismo efecto a selects */
+    select.form-control:focus,
+    select.form-control:focus-visible {
+      border-color: #66afe9;
+      outline: 0;
+      box-shadow:
+        inset 0 1px 1px rgba(0,0,0,.075),
+        0 0 8px rgba(102,175,233,.6);
     }
 
     .form-control::placeholder {
@@ -198,6 +222,13 @@
       cursor: not-allowed;
     }
 
+    /* Centrar contenido (spinner/texto) dentro del botón Enviar */
+    #btn-enviar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     /* Loading spinner */
     .spinner {
       border: 3px solid #f3f3f3;
@@ -207,8 +238,9 @@
       height: 20px;
       animation: spin 1s linear infinite;
       display: inline-block;
-      margin-left: 10px;
+      margin-left: 0; /* centrado cuando no hay texto */
     }
+    .spinner.with-text { margin-left: 10px; }
 
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -321,6 +353,8 @@
             class="form-control" 
             placeholder="Ingresa tu número de teléfono" 
             maxlength="10"
+            inputmode="numeric"
+            pattern="[0-9]*"
             autocomplete="tel"
             oninput="this.value = this.value.replace(/[^0-9]/g, ''); validatePhone()"
           >
@@ -338,7 +372,7 @@
             class="form-control" 
             placeholder="Ingresa tu correo electrónico"
             autocomplete="email"
-            oninput="this.value = this.value.toLowerCase(); validateEmail()"
+            oninput="validateEmail()"
           >
           <small id="correo_electronico-error" class="error-message">Por favor, ingresa un correo válido.</small>
         </div>
@@ -368,7 +402,7 @@
         </div>
       </div>
       
-      <div class="col-xs-12 col-sm-6" id="entidad_otra_container" style="display:none;">
+      <div class="col-xs-12" id="entidad_otra_container" style="display:none;">
         <div class="form-group">
           <label for="entidad_otra">Especifica la entidad <span class="required">*</span></label>
           <input 
@@ -404,44 +438,28 @@
             </svg>
           </div>
           <small id="servicio-error" class="error-message">Este campo es obligatorio.</small>
+          <small id="coordinacion-error" class="error-message">El servicio seleccionado no tiene coordinación predeterminada. Seleccione otro servicio o elija "Otro".</small>
         </div>
       </div>
       
-      <div class="col-xs-12 col-sm-6" id="servicio_otro_container" style="display:none;">
+      <div class="col-xs-12" id="servicio_otro_container" style="display:none;">
         <div class="form-group">
           <label for="servicio_otro">Especifica el servicio <span class="required">*</span></label>
           <input 
             type="text" 
             id="servicio_otro" 
             name="servicio_otro" 
-            class="form-control" 
+            class="form-control to-uppercase" 
             placeholder="Describe el servicio"
+            oninput="this.value = this.value.toUpperCase()"
           >
           <small id="servicio_otro-error" class="error-message">Este campo es obligatorio cuando seleccionas 'Otro'.</small>
         </div>
       </div>
     </div>
 
-    {{-- Fila 5: Coordinación --}}
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <label for="coordinacion">Coordinación <span class="required">*</span></label>
-          <div class="select-wrapper">
-            <select class="form-control" id="coordinacion" name="coordinacion">
-              <option value="" selected disabled>Selecciona la coordinación</option>
-              @foreach($coordinaciones as $coordinacion)
-                <option value="{{ $coordinacion->id }}">{{ $coordinacion->nombre }}</option>
-              @endforeach
-            </select>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <small id="coordinacion-error" class="error-message">Este campo es obligatorio.</small>
-        </div>
-      </div>
-    </div>
+    {{-- Coordinación oculta para envío automático --}}
+    <input type="hidden" id="coordinacion" name="coordinacion" value="">
 
     {{-- Fila 6: Motivo --}}
     <div class="row">
@@ -469,7 +487,8 @@
           id="btn-enviar" 
           aria-label="Enviar solicitud"
         >
-          Enviar <span id="loading-spinner" style="display:none;" class="spinner"></span>
+          <span id="btn-text">Enviar</span>
+          <span id="loading-spinner" style="display:none;" class="spinner with-text" aria-live="polite" aria-label="Cargando"></span>
         </button>
       </div>
     </div>
@@ -501,7 +520,7 @@
     function validateEmail() {
       const emailInput = document.getElementById('correo_electronico');
       const errorMessage = document.getElementById('correo_electronico-error');
-      const regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+      const regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
       if (!regex.test(emailInput.value)) {
         errorMessage.style.display = 'block';
         return false;
@@ -514,17 +533,14 @@
     // Manejo de "Otra entidad"
     function handleEntidadChange() {
       const entidadSelect = document.getElementById('entidad_procedencia');
-      const entidadCol = document.getElementById('entidad_col');
       const container = document.getElementById('entidad_otra_container');
       const input = document.getElementById('entidad_otra');
       const error = document.getElementById('entidad_otra-error');
-      
+
       if (entidadSelect.value === 'otra') {
-        entidadCol.className = 'col-xs-12 col-sm-6';
         container.style.display = 'block';
         input.setAttribute('required', 'required');
       } else {
-        entidadCol.className = 'col-xs-12';
         container.style.display = 'none';
         input.removeAttribute('required');
         input.value = '';
@@ -535,29 +551,35 @@
     // Manejo de "Otro servicio" y asignación automática de coordinación
     function handleServicioChange() {
       const servicioSelect = document.getElementById('servicio');
-      const servicioCol = document.getElementById('servicio_col');
       const container = document.getElementById('servicio_otro_container');
       const input = document.getElementById('servicio_otro');
       const error = document.getElementById('servicio_otro-error');
-      const coordinacionSelect = document.getElementById('coordinacion');
-      
+      const coordinacionHidden = document.getElementById('coordinacion');
+
       if (servicioSelect.value === 'otro') {
-        servicioCol.className = 'col-xs-12 col-sm-6';
         container.style.display = 'block';
         input.setAttribute('required', 'required');
+        // Al seleccionar "Otro", no hay coordinación predeterminada; no enviar el campo
+        coordinacionHidden.value = '';
+        coordinacionHidden.setAttribute('disabled', 'disabled');
+        // Ocultar error de coordinación si estuviera visible
+        const coordErr = document.getElementById('coordinacion-error');
+        if (coordErr) coordErr.style.display = 'none';
       } else {
-        servicioCol.className = 'col-xs-12';
         container.style.display = 'none';
         input.removeAttribute('required');
         input.value = '';
         error.style.display = 'none';
-        
-        // Asignar coordinación predeterminada automáticamente
+
+        // Asignar coordinación predeterminada automáticamente (oculta)
         const selectedOption = servicioSelect.options[servicioSelect.selectedIndex];
         const coordinacionId = selectedOption.getAttribute('data-coordinacion');
-        if (coordinacionId) {
-          coordinacionSelect.value = coordinacionId;
-        }
+        coordinacionHidden.removeAttribute('disabled');
+        coordinacionHidden.value = coordinacionId || '';
+
+        // Mostrar error si el servicio no tiene coordinación definida
+        const coordErr = document.getElementById('coordinacion-error');
+        if (coordErr) coordErr.style.display = (!coordinacionId || coordinacionId === 'null') ? 'block' : 'none';
       }
     }
 
@@ -574,8 +596,13 @@
         // Deshabilitar botón y mostrar spinner
         const btnEnviar = $('#btn-enviar');
         const spinner = $('#loading-spinner');
+        const btnText = $('#btn-text');
+        // Fijar el ancho del botón para que no cambie durante la carga
+        const initialWidth = btnEnviar.outerWidth();
+        btnEnviar.css('width', initialWidth + 'px');
         btnEnviar.prop('disabled', true);
-        spinner.show();
+        btnText.hide();
+        spinner.show().removeClass('with-text');
         
         // Obtener datos del formulario
         const formData = $(this).serialize();
@@ -589,11 +616,11 @@
           success: function(response) {
             if (response.success) {
               // Mostrar mensaje de éxito
+              // Mostrar mensaje de éxito con hora local
               $('#alert-placeholder').html(`
                 <div class="alert alert-success" role="alert">
                   <strong>¡Solicitud enviada correctamente!</strong><br>
                   ${response.message}<br>
-                  Gracias por completar el formulario. El Instituto Mexicano del Transporte revisará su solicitud y le contactará a la brevedad al correo proporcionado.
                 </div>
               `);
               
@@ -627,7 +654,10 @@
           },
           complete: function() {
             btnEnviar.prop('disabled', false);
-            spinner.hide();
+            spinner.hide().addClass('with-text');
+            $('#btn-text').show();
+            // Restaurar ancho original del botón
+            btnEnviar.css('width', '');
           }
         });
       });
@@ -638,7 +668,7 @@
       let valid = true;
       const requiredFields = [
         'nombres', 'apellido_paterno', 'telefono', 'correo_electronico', 
-        'motivo_solicitud', 'coordinacion', 'entidad_procedencia', 'servicio'
+        'motivo_solicitud', 'entidad_procedencia', 'servicio'
       ];
 
       requiredFields.forEach(field => {
@@ -676,6 +706,19 @@
           valid = false;
         } else {
           servicioOtroError.style.display = 'none';
+        }
+      }
+
+      // Validar coordinación predeterminada cuando servicio es de catálogo
+      if (servicioSelect.value && servicioSelect.value !== 'otro') {
+        const coordinacionHidden = document.getElementById('coordinacion');
+        const coordErr = document.getElementById('coordinacion-error');
+        const valor = coordinacionHidden ? coordinacionHidden.value : '';
+        if (!valor || valor === 'null') {
+          if (coordErr) coordErr.style.display = 'block';
+          valid = false;
+        } else {
+          if (coordErr) coordErr.style.display = 'none';
         }
       }
 

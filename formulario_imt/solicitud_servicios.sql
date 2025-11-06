@@ -75,13 +75,10 @@ DROP TABLE IF EXISTS `coordinaciones`;
 CREATE TABLE `coordinaciones` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descripcion` text COLLATE utf8mb4_unicode_ci,
-  `activo` tinyint(1) DEFAULT '1',
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`),
-  KEY `idx_nombre` (`nombre`),
-  KEY `idx_activo` (`activo`)
+  KEY `idx_nombre` (`nombre`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Catálogo de coordinaciones del IMT';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -91,7 +88,7 @@ CREATE TABLE `coordinaciones` (
 
 LOCK TABLES `coordinaciones` WRITE;
 /*!40000 ALTER TABLE `coordinaciones` DISABLE KEYS */;
-INSERT INTO `coordinaciones` VALUES (1,'Coordinación de Desarrollo','Responsable del desarrollo de proyectos, innovación y nuevas tecnologías',1,'2025-10-29 22:27:16'),(2,'Coordinación de Infraestructura','Encargada del mantenimiento, calibración y gestión de infraestructura',1,'2025-10-29 22:27:16'),(3,'Coordinación de Soporte','Brinda soporte técnico, capacitación y asistencia a usuarios',1,'2025-10-29 22:27:16'),(4,'Coordinación de Telemática','Gestiona sistemas telemáticos, comunicaciones y tecnologías de información',1,'2025-10-29 22:27:16');
+INSERT INTO `coordinaciones` VALUES (1,'Coordinación de Desarrollo','2025-10-29 22:27:16'),(2,'Coordinación de Infraestructura','2025-10-29 22:27:16'),(3,'Coordinación de Soporte','2025-10-29 22:27:16'),(4,'Coordinación de Telemática','2025-10-29 22:27:16');
 /*!40000 ALTER TABLE `coordinaciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -105,12 +102,10 @@ DROP TABLE IF EXISTS `entidades_procedencia`;
 CREATE TABLE `entidades_procedencia` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `activo` tinyint(1) DEFAULT '1',
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`),
-  KEY `idx_nombre` (`nombre`),
-  KEY `idx_activo` (`activo`)
+  KEY `idx_nombre` (`nombre`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Catálogo de entidades de procedencia';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -120,7 +115,7 @@ CREATE TABLE `entidades_procedencia` (
 
 LOCK TABLES `entidades_procedencia` WRITE;
 /*!40000 ALTER TABLE `entidades_procedencia` DISABLE KEYS */;
-INSERT INTO `entidades_procedencia` VALUES (1,'Universidad Politécnica de Querétaro',1,'2025-10-29 22:27:16'),(2,'Centro de Investigación y Desarrollo Tecnológico',1,'2025-10-29 22:27:16'),(3,'Instituto Tecnológico de Estudios Superiores',1,'2025-10-29 22:27:16');
+INSERT INTO `entidades_procedencia` VALUES (1,'Universidad Politécnica de Querétaro','2025-10-29 22:27:16'),(2,'Centro de Investigación y Desarrollo Tecnológico','2025-10-29 22:27:16');
 /*!40000 ALTER TABLE `entidades_procedencia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -225,7 +220,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,7 +229,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1);
+INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2025_10_29_000100_create_sessions_table_fallback',2),(5,'2025_11_04_000100_drop_activo_columns_from_tables',3),(6,'2025_11_04_001200_update_solicitudes_servicios_status_drop_columns',4);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -273,16 +268,13 @@ CREATE TABLE `servicios` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `coordinacion_predeterminada_id` int NOT NULL,
-  `descripcion` text COLLATE utf8mb4_unicode_ci,
-  `activo` tinyint(1) DEFAULT '1',
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`),
   KEY `idx_nombre` (`nombre`),
   KEY `idx_coordinacion` (`coordinacion_predeterminada_id`),
-  KEY `idx_activo` (`activo`),
   CONSTRAINT `servicios_ibfk_1` FOREIGN KEY (`coordinacion_predeterminada_id`) REFERENCES `coordinaciones` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Catálogo de servicios con coordinación predeterminada';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Catálogo de servicios con coordinación predeterminada';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -291,7 +283,7 @@ CREATE TABLE `servicios` (
 
 LOCK TABLES `servicios` WRITE;
 /*!40000 ALTER TABLE `servicios` DISABLE KEYS */;
-INSERT INTO `servicios` VALUES (1,'Calibración de Equipos',2,'Servicio de calibración de equipos de medición y sensores',1,'2025-10-29 22:27:16'),(2,'Mantenimiento de Infraestructura',2,'Mantenimiento preventivo y correctivo de infraestructura física',1,'2025-10-29 22:27:16'),(3,'Certificación de Equipos',2,'Certificación y validación de equipos de laboratorio',1,'2025-10-29 22:27:16'),(4,'Desarrollo de Software',1,'Desarrollo de aplicaciones y sistemas personalizados',1,'2025-10-29 22:27:16'),(5,'Consultoría Tecnológica',1,'Asesoría en implementación de nuevas tecnologías',1,'2025-10-29 22:27:16'),(6,'Investigación Aplicada',1,'Proyectos de investigación y desarrollo tecnológico',1,'2025-10-29 22:27:16'),(7,'Capacitación Técnica',3,'Cursos y talleres de capacitación especializada',1,'2025-10-29 22:27:16'),(8,'Soporte Especializado',3,'Soporte técnico para sistemas y equipos',1,'2025-10-29 22:27:16'),(9,'Asesoría Profesional',3,'Asesoría y consultoría técnica especializada',1,'2025-10-29 22:27:16');
+INSERT INTO `servicios` VALUES (1,'Calibración de Equipos',2,'2025-10-29 22:27:16'),(2,'Mantenimiento de Infraestructura',2,'2025-10-29 22:27:16'),(3,'Certificación de Equipos',2,'2025-10-29 22:27:16'),(4,'Desarrollo de Software',1,'2025-10-29 22:27:16'),(5,'Consultoría Tecnológica',1,'2025-10-29 22:27:16'),(6,'Investigación Aplicada',1,'2025-10-29 22:27:16'),(7,'Capacitación Técnica',3,'2025-10-29 22:27:16'),(8,'Soporte Especializado',3,'2025-10-29 22:27:16'),(9,'Asesoría Profesional',3,'2025-10-29 22:27:16'),(10,'Servicios del Pepe',4,'2025-11-04 00:38:09');
 /*!40000 ALTER TABLE `servicios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -321,6 +313,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
+INSERT INTO `sessions` VALUES ('2RXb1k7E0OnCa07ozqSd6MP6JvV0Fus9gBgpWRGT',NULL,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36','YTo0OntzOjY6Il90b2tlbiI7czo0MDoicEYwVG5JQWpwSTRNbkdWTlFFdE9Wekp0bHdPaXJNTzg2NFlEZmxlVyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo3NToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2Nvb3JkaW5hY2lvbmVzP2lkZV93ZWJ2aWV3X3JlcXVlc3RfdGltZT0xNzYyMjc3NDk2NTg5Ijt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9jb29yZGluYWNpb25lcz9pZGVfd2Vidmlld19yZXF1ZXN0X3RpbWU9MTc2MjI3NzQ5NjU4OSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=',1762278407),('7BvAdrmCVTZ7dKkeFwTdHhwD7t3jaeGzXRNg0TgC',1,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiQXM3Z2xnMmdGenNkZzdTbXhGNU9JUk9ib09SSGxhRzJvQW9sY2txbyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NzI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9zb2xpY2l0dWRlcz9pZGVfd2Vidmlld19yZXF1ZXN0X3RpbWU9MTc2MjI4NDA3NTg3NCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MzoidXJsIjthOjA6e31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=',1762284076),('CNfGRhdTvquzce6XlSgy4VR4ZMQ81323Rmy78Lgt',NULL,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Trae/1.104.3 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36','YTo0OntzOjY6Il90b2tlbiI7czo0MDoieFMyRjRCNGZtbXgxOFZOS0NJcE9TSjRPNzNkY1pBODk3dllqVDdNNCI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo3NToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2Nvb3JkaW5hY2lvbmVzP2lkZV93ZWJ2aWV3X3JlcXVlc3RfdGltZT0xNzYyMjc3NDk2NTg5Ijt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9jb29yZGluYWNpb25lcz9pZGVfd2Vidmlld19yZXF1ZXN0X3RpbWU9MTc2MjI3NzQ5NjU4OSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=',1762278408),('HIiHUMAo9mTxdsOpuN7YXwFelXJYJzYksmjezmpS',NULL,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0','YTozOntzOjY6Il90b2tlbiI7czo0MDoiOXhwUUJtbnNwbm1rQWJJMVhqcEZDQVdqQ0lMN0JpUTB3WDRvYmpRWSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMy9zb2xpY2l0dWQtc2VydmljaW9zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==',1762283581),('pBOSUuF5IfXJ6ficVBKQJAtMjK0nXj6CX2iBqoqt',1,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiQ0pKdnV6T0dYeEJCdlZpQXNrd3BpNkpVaWp6YmYwR0J1VGdjcDZ6ciI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjM2OiJodHRwOi8vMTI3LjAuMC4xOjgwMDQvY29vcmRpbmFjaW9uZXMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=',1762284097),('UiekQ6hMQfcdusvSYk8dsY3NxMAFTgIOg3coVevy',1,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0','YTo0OntzOjY6Il90b2tlbiI7czo0MDoidEJ3anlqWDUyRlg4M3JURHk1Q0dXSVZHTTQxZGgzZ1JaeUF1TnczRyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwNC9zb2xpY2l0dWRlcyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==',1762281346);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -344,11 +337,9 @@ CREATE TABLE `solicitudes_servicios` (
   `servicio_otro` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Se llena cuando selecciona "Otro" servicio',
   `coordinacion_id` int NOT NULL,
   `motivo_solicitud` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `estatus` enum('pendiente','en_revision','aprobada','rechazada','completada') COLLATE utf8mb4_unicode_ci DEFAULT 'pendiente',
+  `estatus` enum('en_revision','revisado') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'en_revision',
   `fecha_solicitud` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_actualizacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `usuario_actualizacion` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `notas_internas` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   KEY `idx_nombres` (`nombres`),
   KEY `idx_apellidos` (`apellido_paterno`,`apellido_materno`),
@@ -362,7 +353,7 @@ CREATE TABLE `solicitudes_servicios` (
   CONSTRAINT `solicitudes_servicios_ibfk_1` FOREIGN KEY (`entidad_procedencia_id`) REFERENCES `entidades_procedencia` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `solicitudes_servicios_ibfk_2` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `solicitudes_servicios_ibfk_3` FOREIGN KEY (`coordinacion_id`) REFERENCES `coordinaciones` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla principal de solicitudes de servicios';
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla principal de solicitudes de servicios';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -371,7 +362,7 @@ CREATE TABLE `solicitudes_servicios` (
 
 LOCK TABLES `solicitudes_servicios` WRITE;
 /*!40000 ALTER TABLE `solicitudes_servicios` DISABLE KEYS */;
-INSERT INTO `solicitudes_servicios` VALUES (1,'JUAN CARLOS','GONZÁLEZ','PÉREZ','4421234567','juan.gonzalez@upq.edu.mx',1,NULL,1,NULL,2,'Se requiere calibración de 5 equipos de medición del laboratorio de física. Los equipos incluyen balanzas analíticas, termómetros digitales y medidores de presión que serán utilizados en prácticas académicas del próximo semestre.','pendiente','2025-10-29 22:27:16','2025-10-29 22:27:16',NULL,NULL),(2,'MARÍA FERNANDA','RODRÍGUEZ','SÁNCHEZ','4429876543','maria.rodriguez@empresa.mx',NULL,'SECRETARÍA DE COMUNICACIONES Y TRANSPORTES',7,NULL,3,'Solicito capacitación técnica especializada para un equipo de 10 ingenieros en sistemas de transporte inteligente. La capacitación debe cubrir aspectos teóricos y prácticos con duración de 40 horas.','pendiente','2025-10-29 22:27:16','2025-10-29 22:27:16',NULL,NULL),(3,'ROBERTO ALEJANDRO','MARTÍNEZ','LÓPEZ','4425678901','roberto.martinez@cidet.mx',2,NULL,NULL,'AUDITORÍA DE SISTEMAS DE SEGURIDAD VIAL',1,'Requerimos auditoría completa de sistemas de seguridad vial implementados en carreteras estatales. Se necesita evaluar sensores, cámaras y sistemas de alerta temprana instalados en 50 kilómetros de autopista.','pendiente','2025-10-29 22:27:16','2025-10-29 22:27:16',NULL,NULL),(4,'ANA LAURA','HERNÁNDEZ',NULL,'4423456789','ana.hernandez@gobierno.mx',NULL,'DIRECCIÓN GENERAL DE TRANSPORTE FEDERAL',NULL,'IMPLEMENTACIÓN DE SISTEMA DE MONITOREO GPS',4,'Se solicita implementación de sistema de monitoreo GPS para flota vehicular de 200 unidades. El sistema debe incluir seguimiento en tiempo real, geofencing, reportes automáticos y alertas de mantenimiento preventivo.','en_revision','2025-10-29 22:27:16','2025-10-29 22:27:16',NULL,NULL);
+INSERT INTO `solicitudes_servicios` VALUES (1,'JUAN CARLOS','GONZÁLEZ','PÉREZ','4421234567','juan.gonzalez@upq.edu.mx',1,NULL,1,NULL,2,'Se requiere calibración de 5 equipos de medición del laboratorio de física. Los equipos incluyen balanzas analíticas, termómetros digitales y medidores de presión que serán utilizados en prácticas académicas del próximo semestre.','en_revision','2025-10-29 22:27:16','2025-11-04 19:11:25'),(2,'MARÍA FERNANDA','RODRÍGUEZ','SÁNCHEZ','4429876543','maria.rodriguez@empresa.mx',NULL,'SECRETARÍA DE COMUNICACIONES Y TRANSPORTES',7,NULL,3,'Solicito capacitación técnica especializada para un equipo de 10 ingenieros en sistemas de transporte inteligente. La capacitación debe cubrir aspectos teóricos y prácticos con duración de 40 horas.','en_revision','2025-10-29 22:27:16','2025-11-04 19:11:25'),(3,'ROBERTO ALEJANDRO','MARTÍNEZ','LÓPEZ','4425678901','roberto.martinez@cidet.mx',2,NULL,NULL,'AUDITORÍA DE SISTEMAS DE SEGURIDAD VIAL',1,'Requerimos auditoría completa de sistemas de seguridad vial implementados en carreteras estatales. Se necesita evaluar sensores, cámaras y sistemas de alerta temprana instalados en 50 kilómetros de autopista.','en_revision','2025-10-29 22:27:16','2025-11-04 19:11:25'),(4,'ANA LAURA','HERNÁNDEZ',NULL,'4423456789','ana.hernandez@gobierno.mx',NULL,'DIRECCIÓN GENERAL DE TRANSPORTE FEDERAL',NULL,'IMPLEMENTACIÓN DE SISTEMA DE MONITOREO GPS',4,'Se solicita implementación de sistema de monitoreo GPS para flota vehicular de 200 unidades. El sistema debe incluir seguimiento en tiempo real, geofencing, reportes automáticos y alertas de mantenimiento preventivo.','en_revision','2025-10-29 22:27:16','2025-10-29 22:27:16'),(5,'JOSÉ ARMANDO','MAURICIO',NULL,'4428378528','122044542@upq.edu.mx',2,NULL,1,NULL,4,'dgsafaQE24{.E{.12+','en_revision','2025-10-29 22:54:34','2025-11-04 19:11:25'),(6,'JOSÉ ARMANDO','MAURICIO',NULL,'4428378528','122044542@upq.edu.mx',NULL,'EFFWEF',NULL,'fwefw',2,'wefwefw','en_revision','2025-10-29 22:56:30','2025-11-04 19:11:25'),(7,'JOSÉ ARMANDO','MAURICIO',NULL,'4428378528','122044542@upq.edu.mx',NULL,NULL,1,NULL,2,'dasfsdas','en_revision','2025-10-30 22:28:54','2025-11-04 19:11:25'),(8,'JOSÉ ARMANDO','MAURICIO',NULL,'4428378528','122044542@upq.edu.mx',NULL,NULL,9,NULL,3,'kkkkkk','en_revision','2025-10-30 22:32:23','2025-11-04 19:11:25'),(9,'JOSÉ ARMANDO','MAURICIO',NULL,'4428378528','122044542@upq.edu.mx',NULL,NULL,4,NULL,2,'sdgaad','en_revision','2025-10-31 16:03:15','2025-11-04 19:11:25'),(10,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,7,NULL,3,'wdADAS','en_revision','2025-10-31 16:03:50','2025-11-04 19:11:25'),(11,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,2,NULL,2,'LOLOL','en_revision','2025-10-31 16:55:59','2025-11-04 19:11:25'),(12,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',NULL,'UPQ',NULL,'LOL',1,'ola','en_revision','2025-10-31 17:02:45','2025-11-04 19:11:25'),(13,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',NULL,'XD',5,NULL,1,'sdsdDSD','en_revision','2025-10-31 17:03:23','2025-11-04 19:11:25'),(14,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',NULL,'TRUCHAS F.C',NULL,'LOL XD',1,'Naturaleza','en_revision','2025-10-31 17:17:19','2025-11-04 19:11:25'),(15,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,2,NULL,2,'lol','en_revision','2025-10-31 17:21:51','2025-11-04 19:11:25'),(16,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,NULL,'LOL',1,'comomesra','en_revision','2025-10-31 17:25:07','2025-11-04 19:11:25'),(17,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,2,NULL,2,'lol','en_revision','2025-10-31 17:25:29','2025-11-04 19:11:25'),(18,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,8,NULL,3,'lol','en_revision','2025-10-31 17:29:28','2025-11-04 19:11:25'),(19,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',1,NULL,4,NULL,1,'asdadsa','en_revision','2025-10-31 17:30:10','2025-11-04 19:11:25'),(20,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,6,NULL,1,'dfsdsdcc','en_revision','2025-10-31 18:07:03','2025-11-04 19:11:25'),(21,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',NULL,NULL,6,NULL,1,'lol','en_revision','2025-10-31 19:26:53','2025-11-04 19:11:25'),(22,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,2,NULL,2,'ASAsa','en_revision','2025-10-31 22:53:19','2025-11-04 19:11:25'),(23,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',NULL,NULL,NULL,'ASS',1,'SADAD','en_revision','2025-10-31 22:53:51','2025-11-04 19:11:25'),(24,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,2,NULL,2,'sasaasa','en_revision','2025-10-31 22:54:12','2025-11-04 19:11:25'),(25,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,6,NULL,1,'asas','en_revision','2025-10-31 22:54:59','2025-11-04 19:11:25'),(26,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',NULL,NULL,6,NULL,1,'adASA','en_revision','2025-10-31 22:58:34','2025-11-04 19:11:25'),(27,'PEPEAPEPE','ASASA','ASASA','2313123122','122044542@upq.edu.mx',NULL,'SASAS',9,NULL,3,'gygui','en_revision','2025-11-03 17:17:15','2025-11-04 19:11:25'),(28,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,9,NULL,3,'vyvyu','en_revision','2025-11-03 17:33:09','2025-11-04 19:11:25'),(29,'CRISTOPHER','LOYOLA','MARTÍNEZ','4681057656','cristo@gmail.com',NULL,'PEPE',NULL,'PEPE',1,'OISOIASDNIXonKNK20I3\'}{.+','en_revision','2025-11-03 22:52:29','2025-11-04 19:11:25'),(30,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',1,NULL,NULL,'IMT',1,'jajajajajaj','en_revision','2025-11-04 16:36:49','2025-11-04 19:11:25'),(31,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,NULL,'JJJJJJJJJJJJJ',1,'fjkvbkjbñ648Ñ+}','en_revision','2025-11-04 16:38:28','2025-11-04 19:11:25'),(32,'JOSÉ ARMANDO','MAURICIO','ACEVEDO','4428378528','122044542@upq.edu.mx',2,NULL,2,NULL,2,'jhjjhj','en_revision','2025-11-04 16:56:58','2025-11-04 19:11:25');
 /*!40000 ALTER TABLE `solicitudes_servicios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -393,7 +384,7 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -402,6 +393,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'JOSÉ ARMANDO ACEVEDO MAURICIO','122044542@upq.edu.mx',NULL,'$2y$12$vjAsEN.XeEraqYmqq8qkkuPlvRQgsJwnezVtQaHxM0zBZMniIiDoK',NULL,'2025-11-03 22:41:00','2025-11-03 22:41:00');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -624,4 +616,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-29 16:37:31
+-- Dump completed on 2025-11-04 13:22:46
