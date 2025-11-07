@@ -2,10 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Http\Controllers\SolicitudesServiciosController;
-use App\Http\Controllers\CoordinacionesController;
-use App\Http\Controllers\EntidadesProcedenciaController;
-use App\Http\Controllers\ServiciosController;
+use App\Http\Controllers\FormularioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,23 +14,22 @@ use App\Http\Controllers\ServiciosController;
 Route::redirect('/', '/solicitud-servicios');
 
 // Vista principal explícita en /solicitud-servicios
-Route::get('/solicitud-servicios', [SolicitudesServiciosController::class, 'index'])
+Route::get('/solicitud-servicios', [FormularioController::class, 'index'])
     ->name('solicitud-servicios');
 
 // Ruta alternativa /solicitud apuntando a la misma vista
-Route::get('/solicitud', [SolicitudesServiciosController::class, 'index'])
+Route::get('/solicitud', [FormularioController::class, 'index'])
     ->name('solicitud.index');
 
 // Ruta para guardar la solicitud
-Route::post('/solicitud/store', [SolicitudesServiciosController::class, 'store'])
+Route::post('/solicitud/store', [FormularioController::class, 'store'])
     ->name('solicitud.store');
 
 // Ruta para obtener coordinación predeterminada de un servicio (AJAX)
-Route::get('/solicitud/coordinacion/{servicioId}', [ServiciosController::class, 'coordinacion'])
+Route::get('/solicitud/coordinacion/{servicioId}', [FormularioController::class, 'coordinacion'])
     ->name('solicitud.coordinacion');
 
-// Ruta opcional para listar solicitudes (administración)
 // Endpoints JSON opcionales para catálogos
-Route::get('/coordinaciones', [CoordinacionesController::class, 'index'])->name('coordinaciones.index');
-Route::get('/entidades', [EntidadesProcedenciaController::class, 'index'])->name('entidades.index');
-Route::get('/servicios', [ServiciosController::class, 'index'])->name('servicios.index');
+Route::get('/coordinaciones', [FormularioController::class, 'coordinaciones'])->name('coordinaciones.index');
+Route::get('/entidades', [FormularioController::class, 'entidades'])->name('entidades.index');
+Route::get('/servicios', [FormularioController::class, 'servicios'])->name('servicios.index');
