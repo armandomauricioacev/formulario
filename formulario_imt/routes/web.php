@@ -33,3 +33,7 @@ Route::get('/solicitud/coordinacion/{servicioId}', [FormularioController::class,
 Route::get('/coordinaciones', [FormularioController::class, 'coordinaciones'])->name('coordinaciones.index');
 Route::get('/entidades', [FormularioController::class, 'entidades'])->name('entidades.index');
 Route::get('/servicios', [FormularioController::class, 'servicios'])->name('servicios.index');
+
+// Listado de solicitudes con filtros en tiempo real
+Route::get('/solicitudes', [FormularioController::class, 'solicitudesIndex'])->name('solicitudes.index');
+Route::get('/solicitudes/data', [FormularioController::class, 'solicitudesData'])->name('solicitudes.data');

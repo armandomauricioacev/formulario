@@ -30,8 +30,6 @@
     <div class="wrapper">
         <div class="card">
             <div class="content">
-                <h2>{{ $titulo }}</h2>
-                <hr />
                 @foreach ($lineas as $line)
                     @if (trim($line) !== '')
                         <p>{{ $line }}</p>

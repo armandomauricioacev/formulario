@@ -79,18 +79,6 @@ class FormularioController extends Controller
                 ->value('coordinacion_predeterminada_id');
         }
 
-        if ($coordinacionId === null && $servicioId === null && $servicioOtro !== null) {
-            $coordinacionId = DB::table('coordinaciones')
-                ->orderBy('id', 'asc')
-                ->value('id');
-
-            if ($coordinacionId === null) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No hay coordinaciones disponibles para asignar por defecto.',
-                ], 422);
-            }
-        }
 
         if ($entidadId === null && $entidadOtra === null) {
             return response()->json([
@@ -220,7 +208,7 @@ class FormularioController extends Controller
             ->value('nombre');
 
         $coordinacion = DB::table('coordinaciones')->where('id', $sol->coordinacion_id)->first();
-
+        
         $esOtro = ($sol->servicio_id === null && $sol->servicio_otro !== null);
         $entidadNombre = null;
         if (!is_null($sol->entidad_procedencia_id)) {
@@ -346,8 +334,10 @@ class FormularioController extends Controller
 
         if ($esOtro) {
             $send('solicitante', $sol->correo_electronico);
-            if ($coordinacion) {
-                $send('representante', $coordinacion->correo_representante ?? '');
+            // Si no hay coordinación asignada (NULL), seleccionar una solo para notificar al representante
+            $coordinacionNotif = $coordinacion ?? DB::table('coordinaciones')->orderBy('id', 'asc')->first();
+            if ($coordinacionNotif) {
+                $send('representante', $coordinacionNotif->correo_representante ?? '');
             }
             return;
         } else {
@@ -359,4 +349,65 @@ class FormularioController extends Controller
             }
         }
     }
+
+    /**
+     * Vista de listado de solicitudes con filtros (AJAX, sin recarga).
+     */
+    public function solicitudesIndex(Request $request)
+    {
+        $servicios = DB::table('servicios')->orderBy('nombre', 'asc')->get(['id', 'nombre']);
+        $coordinaciones = DB::table('coordinaciones')->orderBy('nombre', 'asc')->get(['id', 'nombre']);
+        $estatus = DB::table('solicitudes_servicios')->select('estatus')->distinct()->pluck('estatus');
+        return view('solicitudes.index', compact('servicios', 'coordinaciones', 'estatus'));
+    }
+
+    /**
+     * Endpoint que devuelve el HTML del listado filtrado con paginación.
+     */
+    public function solicitudesData(Request $request)
+    {
+        $q = trim((string)$request->query('q', ''));
+        $status = $request->query('estatus');
+        $servicioId = $request->query('servicio_id');
+        $coordinacionId = $request->query('coordinacion_id');
+        $perPage = (int)$request->query('per_page', 10);
+
+        $query = DB::table('solicitudes_servicios as s')
+            ->leftJoin('servicios as sv', 'sv.id', '=', 's.servicio_id')
+            ->leftJoin('coordinaciones as c', 'c.id', '=', 's.coordinacion_id')
+            ->select(
+                's.id', 's.nombres', 's.apellido_paterno', 's.apellido_materno', 's.correo_electronico',
+                's.servicio_id', 's.servicio_otro', 's.estatus', 's.coordinacion_id',
+                DB::raw('COALESCE(s.servicio_otro, sv.nombre) as servicio_nombre'),
+                'c.nombre as coordinacion_nombre'
+            )
+            ->orderByDesc('s.id');
+
+        if ($q !== '') {
+            $query->where(function ($w) use ($q) {
+                $w->where('s.nombres', 'like', "%$q%")
+                  ->orWhere('s.apellido_paterno', 'like', "%$q%")
+                  ->orWhere('s.apellido_materno', 'like', "%$q%")
+                  ->orWhere('s.correo_electronico', 'like', "%$q%")
+                  ->orWhere('sv.nombre', 'like', "%$q%")
+                  ->orWhere('s.servicio_otro', 'like', "%$q%")
+                  ->orWhere('c.nombre', 'like', "%$q%");
+            });
+        }
+        if (!empty($status)) {
+            $query->where('s.estatus', $status);
+        }
+        if (!empty($servicioId) && is_numeric($servicioId)) {
+            $query->where('s.servicio_id', (int)$servicioId);
+        }
+        if (!empty($coordinacionId) && is_numeric($coordinacionId)) {
+            $query->where('s.coordinacion_id', (int)$coordinacionId);
+        }
+
+        $solicitudes = $query->paginate($perPage)->appends($request->query());
+
+        $html = view('solicitudes._table', compact('solicitudes'))->render();
+        return response($html);
+    }
+
 }
