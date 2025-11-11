@@ -59,3 +59,35 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Despliegue en Plesk
+
+- Requisitos
+  - PHP `8.2+` con extensiones estándar de Laravel (OpenSSL, PDO, Mbstring, Tokenizer, Ctype, JSON, BCMath).
+  - Configurar el Document Root del dominio a `public` del proyecto.
+
+- Pasos de instalación
+  - Subir el proyecto al servidor (idealmente fuera de `httpdocs` y apuntar `httpdocs` a `public`).
+  - En la raíz del proyecto, ejecutar:
+    - `composer install --no-dev --optimize-autoloader`
+    - Copiar `.env.example` a `.env` y ajustar valores:
+      - `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://tu-dominio`
+      - `APP_LOCALE=es`, `APP_TIMEZONE=America/Mexico_City`
+      - Correo SMTP (`MAIL_*`) sin credenciales en texto plano en el repo
+      - `SESSION_SECURE_COOKIE=true`, `SESSION_SAME_SITE=lax`
+      - `QUEUE_CONNECTION=sync` (si no tendrás un worker en segundo plano)
+    - `php artisan key:generate`
+    - `php artisan migrate --force`
+    - `php artisan config:cache && php artisan route:cache && php artisan view:cache`
+
+- Permisos
+  - Asegurar escritura en `storage/` y `bootstrap/cache/`.
+
+- Notas de seguridad
+  - Las cabeceras avanzadas (CSP, HSTS, X-Frame-Options, COOP) ya están activas en producción desde middleware.
+  - Si tu dominio usa proxy/CDN, configura `APP_URL` y revisa cabeceras duplicadas en el proxy.
+
+- Comprobación final
+  - Accede a `https://tu-dominio/solicitud-servicios`.
+  - Verifica envío de correos con tu SMTP.
+  - Revisa los logs (`storage/logs/laravel.log`) ante cualquier incidencia.
