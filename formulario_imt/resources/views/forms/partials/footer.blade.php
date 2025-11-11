@@ -6,6 +6,11 @@
     $GOB_JS = 'https://framework-gb.cdn.gob.mx/gm/v3/assets/js/gobmx.js';
   @endphp
 
+  {{-- Dependencias para tooltips (Popper + Bootstrap JS) --}}
+  {{-- Requeridas por scripts de GOB.MX que usan $(...).tooltip --}}
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+
   {{-- JS oficial GOB.MX (PROD v3) --}}
   <script src="{{ $GOB_JS }}"></script>
 

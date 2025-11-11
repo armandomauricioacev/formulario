@@ -40,8 +40,8 @@ class SecureHeaders
                 $csp = implode(' ', [
                     // Núcleo
                     "default-src 'self' https: data: blob:",
-                    // Scripts
-                    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://framework-gb.cdn.gob.mx https://cdn.jsdelivr.net",
+                    // Scripts (eliminar 'unsafe-eval' para mayor seguridad)
+                    "script-src 'self' 'unsafe-inline' https://framework-gb.cdn.gob.mx https://cdn.jsdelivr.net",
                     "script-src-elem 'self' https://framework-gb.cdn.gob.mx https://cdn.jsdelivr.net",
                     // Estilos
                     "style-src 'self' 'unsafe-inline' https://framework-gb.cdn.gob.mx https://fonts.googleapis.com",

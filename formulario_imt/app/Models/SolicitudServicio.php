@@ -4,6 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Modelo Eloquent para la tabla "solicitudes_servicios".
+ *
+ * Representa una solicitud de servicio. No usa timestamps.
+ * Campos asignables incluyen entidad/coordinación, datos de contacto y notas.
+ */
 class SolicitudServicio extends Model
 {
     protected $table = 'solicitudes_servicios';

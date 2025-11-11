@@ -91,3 +91,23 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
   - Accede a `https://tu-dominio/solicitud-servicios`.
   - Verifica envío de correos con tu SMTP.
   - Revisa los logs (`storage/logs/laravel.log`) ante cualquier incidencia.
+
+## Refactor de assets (Solicitud de Servicios)
+
+- CSS de la vista `solicitud-servicios` se movió a `resources/css/servicios.css`.
+- Lógica JS se migró a `resources/js/servicios.js` usando módulos ES6.
+- La vista carga los assets con `@vite(['resources/css/servicios.css'])` y `@vite(['resources/js/servicios.js'])`.
+- El formulario ahora expone la ruta con `data-action="{{ route('solicitud.store') }}"` para que el JS la use sin inline scripts.
+- Las funciones de validación y manejo se exponen en `window` para compatibilidad con atributos inline existentes.
+
+### Construcción de assets
+- Desarrollo: `npm run dev` (Vite dev server).
+- Producción: `npm run build` y luego `php artisan config:cache`.
+- Si Plesk no tiene Node, construye localmente y sube el `public/build` generado por Vite.
+
+### Solución al error "Vite manifest not found"
+- Causa: se usa `@vite(...)` pero no existe `public/build/manifest.json`.
+- Opciones de solución:
+  - Generar assets: `npm install` y `npm run build` (subir `public/build` a Plesk).
+  - Usar fallback automático: la vista incluye condicionalmente `public/css/servicios.css` y `public/js/servicios.js` si no hay manifest.
+    - Esto evita el error sin cambiar diseño ni lógica.

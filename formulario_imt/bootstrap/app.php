@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', [
             \App\Http\Middleware\SecureHeaders::class,
         ]);
+
+        // Alias para proteger listado de solicitudes sin afectar otros grupos
+        $middleware->alias([
+            'protect.solicitudes' => \App\Http\Middleware\ProtectSolicitudes::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
