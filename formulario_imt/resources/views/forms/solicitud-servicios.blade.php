@@ -262,12 +262,12 @@
     /* Responsive */
     @media (max-width: 768px) {
       h1 { font-size: 2.5rem; }
-      h3 { font-size: 1.5rem; }
+      h3 { font-size: 1.7rem; }
     }
 
     @media (max-width: 576px) {
       h1 { font-size: 2rem; }
-      h3 { font-size: 1.3rem; }
+      h3 { font-size: 1.8rem; }
     }
   </style>
 

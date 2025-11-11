@@ -23,6 +23,7 @@ Route::get('/solicitud', [FormularioController::class, 'index'])
 
 // Ruta para guardar la solicitud
 Route::post('/solicitud/store', [FormularioController::class, 'store'])
+    ->middleware('throttle:30,1') // 30 peticiones por minuto por IP
     ->name('solicitud.store');
 
 // Ruta para obtener coordinación predeterminada de un servicio (AJAX)

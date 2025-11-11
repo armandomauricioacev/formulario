@@ -321,6 +321,36 @@
       });
     }
   </script>
+  <script>
+    // Insertar un <nav> oculto y sin impacto de layout si no existe
+    (function() {
+      function ensureHiddenNav() {
+        try {
+          if (!document.querySelector('nav')) {
+            var nav = document.createElement('nav');
+            nav.setAttribute('role', 'navigation');
+            nav.setAttribute('aria-hidden', 'true');
+            nav.className = 'navbar';
+            nav.hidden = true;
+            // Asegurar cero impacto visual/espacial
+            nav.style.position = 'absolute';
+            nav.style.width = '0';
+            nav.style.height = '0';
+            nav.style.overflow = 'hidden';
+            nav.style.clip = 'rect(0 0 0 0)';
+            nav.style.clipPath = 'inset(50%)';
+            nav.style.whiteSpace = 'nowrap';
+            document.body.appendChild(nav);
+          }
+        } catch (e) { /* silencioso */ }
+      }
+      if (document.readyState !== 'loading') {
+        ensureHiddenNav();
+      } else {
+        document.addEventListener('DOMContentLoaded', ensureHiddenNav);
+      }
+    })();
+  </script>
 </head>
 <body>
   <main class="page">
