@@ -387,24 +387,13 @@ class FormularioController extends Controller
         if ($esOtro) {
             $defaults['solicitante'] = [
                 'titulo' => '¡Hemos recibido tu solicitud!',
-                'cuerpo' => "Hola @{{solicitante.nombre_completo}},\nHemos recibido tu solicitud para el servicio \"@{{servicio.nombre}}\".\nLe daremos seguimiento desde el Instituto Mexicano del Transporte y nos pondremos en contacto contigo a la brevedad por este medio.",
+                'cuerpo' => "Estimado(a) @{{solicitante.nombre_completo}} ,\nHemos recibido tu solicitud para el servicio de \"@{{servicio.nombre}}\" .\nTu requerimiento será revisado por el equipo del Instituto Mexicano del Transporte , y nos pondremos en contacto contigo a la brevedad a través de este mismo medio para brindarte la atención correspondiente.\nAgradecemos tu confianza y el interés en nuestros servicios.",
                 'despedida' => 'Saludos cordiales, Instituto Mexicano del Transporte',
             ];
 
-            $cuerpoRep =
-                "Se ha seleccionado el servicio \"" . ($sol->servicio_otro ?? '') . "\" que no está en nuestro catálogo. Favor de revisarlo y atenderlo a la brevedad.\n\n" .
-                "Información del solicitante:\n" .
-                "Nombre: " . ($sol->nombres ?? '') . "\n" .
-                "Apellido Paterno: " . ($sol->apellido_paterno ?? '') . "\n" .
-                "Apellido Materno: " . ($sol->apellido_materno ?? '') . "\n" .
-                "Entidad de procedencia: " . ($entidadNombre ?? '') . "\n" .
-                "Teléfono: " . ($sol->telefono ?? '') . "\n" .
-                "Correo: " . ($sol->correo_electronico ?? '') . "\n" .
-                "Motivo: " . ($sol->motivo_solicitud ?? '');
-
             $defaults['representante'] = [
                 'titulo' => '¡Notificación de nueva solicitud de servicio!',
-                'cuerpo' => $cuerpoRep,
+                'cuerpo' => "Estimado(a) representante,\n\nSe informa que la @{{coordinacion.nombre}} ha recibido una nueva solicitud correspondiente al servicio @{{servicio.nombre}}, registrada con el número de folio @{{solicitud.id}}.\n\nDado que este servicio no se encuentra dentro del catálogo oficial, se solicita su revisión y atención a la brevedad.\n\nA continuación, se presenta la información del solicitante:\n\nNombre: @{{solicitante.nombre}}\n\nApellido paterno: @{{solicitante.apellido_paterno}}\n\nApellido materno: @{{solicitante.apellido_materno}}\n\nEntidad de procedencia: @{{solicitante.entidad}}\n\nTeléfono: @{{solicitante.telefono}}\n\nCorreo electrónico: @{{solicitante.correo}}\n\nMotivo de la solicitud: @{{solicitud.motivo_solicitud}}\n\nSe agradece su apoyo para brindar seguimiento oportuno conforme a los procedimientos establecidos.",
                 'despedida' => 'Atentamente, División de Telemática',
             ];
         }
@@ -413,24 +402,40 @@ class FormularioController extends Controller
             '@{{solicitud.id}}' => (string)$sol->id,
             '@{{ solicitud.id }}' => (string)$sol->id,
 
+            // Datos del solicitante
             '@{{solicitante.nombre_completo}}' => $nombreSolicitante,
             '@{{ solicitante.nombre_completo }}' => $nombreSolicitante,
-
+            '@{{solicitante.nombre}}' => ($sol->nombres ?? ''),
+            '@{{ solicitante.nombre }}' => ($sol->nombres ?? ''),
+            '@{{solicitante.nombres}}' => ($sol->nombres ?? ''),
+            '@{{ solicitante.nombres }}' => ($sol->nombres ?? ''),
+            '@{{solicitante.apellido_paterno}}' => ($sol->apellido_paterno ?? ''),
+            '@{{ solicitante.apellido_paterno }}' => ($sol->apellido_paterno ?? ''),
+            '@{{solicitante.apellido_materno}}' => ($sol->apellido_materno ?? ''),
+            '@{{ solicitante.apellido_materno }}' => ($sol->apellido_materno ?? ''),
+            '@{{solicitante.telefono}}' => ($sol->telefono ?? ''),
+            '@{{ solicitante.telefono }}' => ($sol->telefono ?? ''),
             '@{{solicitante.correo}}' => $sol->correo_electronico,
             '@{{ solicitante.correo }}' => $sol->correo_electronico,
+            '@{{solicitante.entidad}}' => ($entidadNombre ?? ''),
+            '@{{ solicitante.entidad }}' => ($entidadNombre ?? ''),
 
+            // Datos de la solicitud
+            '@{{solicitud.motivo_solicitud}}' => ($sol->motivo_solicitud ?? ''),
+            '@{{ solicitud.motivo_solicitud }}' => ($sol->motivo_solicitud ?? ''),
+            '@{{solicitud.fecha_solicitud}}' => (string)($sol->fecha_solicitud ?? ''),
+            '@{{ solicitud.fecha_solicitud }}' => (string)($sol->fecha_solicitud ?? ''),
+
+            // Datos del servicio y coordinación
             '@{{servicio.nombre}}' => $servicioNombre,
             '@{{ servicio.nombre }}' => $servicioNombre,
 
             '@{{coordinacion.nombre}}' => $coordinacion->nombre ?? '',
             '@{{ coordinacion.nombre }}' => ($coordinacion->nombre ?? ''),
-
             '@{{coordinacion.coordinador}}' => $coordinacion->coordinador ?? '',
             '@{{ coordinacion.coordinador }}' => ($coordinacion->coordinador ?? ''),
-
             '@{{coordinacion.asistente}}' => $coordinacion->asistente ?? '',
             '@{{ coordinacion.asistente }}' => ($coordinacion->asistente ?? ''),
-
             '@{{coordinacion.representante}}' => $coordinacion->representante ?? '',
             '@{{ coordinacion.representante }}' => ($coordinacion->representante ?? ''),
         ];
