@@ -22,6 +22,8 @@
   {{-- Contenedor para alertas --}}
   <div id="alert-placeholder" style="margin-top: 15px;"></div>
 
+  <script>window.APP_DEBUG = false;</script>
+
   {{-- Título principal --}}
   <center><h2>Solicitud de servicios IMT</h2></center>
   <br>

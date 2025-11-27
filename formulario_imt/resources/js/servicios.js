@@ -179,25 +179,87 @@ export function initServicios() {
             );
             $('#solicitudForm')[0].reset();
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Oculta panel debug si estaba visible
+            if (window.APP_DEBUG) {
+              document.getElementById('debug-section')?.setAttribute('style', 'display:none;');
+              document.getElementById('error-details') && (document.getElementById('error-details').textContent = '');
+              document.getElementById('debug-logs') && (document.getElementById('debug-logs').textContent = '');
+            }
           }
         },
         error: function(xhr) {
-          let errorMessage = 'Error al enviar la solicitud. Por favor, intente nuevamente.';
-          if (xhr.responseJSON && xhr.responseJSON.errors) {
-            errorMessage = '<ul>';
-            window.jQuery.each(xhr.responseJSON.errors, function(field, messages) {
-              messages.forEach(function(message) {
-                errorMessage += '<li>' + message + '</li>';
+          let html = '';
+          // Construir detalles ricos de error
+          if (xhr.responseJSON) {
+            const json = xhr.responseJSON;
+            if (json.errors) {
+              html += '<ul>';
+              window.jQuery.each(json.errors, function(field, messages) {
+                messages.forEach(function(message) { html += '<li>' + message + '</li>'; });
               });
-            });
-            errorMessage += '</ul>';
+              html += '</ul>';
+            }
+            if (json.message) {
+              html += '<div><strong>Mensaje:</strong> ' + window.jQuery.escapeSelector ? json.message : json.message + '</div>';
+            }
+            if (json.exception) {
+              html += '<div><strong>Excepción:</strong> ' + json.exception + '</div>';
+            }
+            if (json.file) {
+              html += '<div><strong>Archivo:</strong> ' + json.file + ':' + (json.line || '') + '</div>';
+            }
+          } else {
+            // Fallback: texto de respuesta o status
+            const text = (xhr.responseText || '').trim();
+            html += '<div><strong>Status:</strong> ' + xhr.status + ' ' + (xhr.statusText || '') + '</div>';
+            if (text) {
+              // Mostrar un extracto si es HTML largo
+              const snippet = text.length > 2000 ? text.substring(0, 2000) + '... (truncado)' : text;
+              html += '<pre style="white-space: pre-wrap; max-height: 300px; overflow:auto;">' + window.jQuery('<div/>').text(snippet).html() + '</pre>';
+            }
           }
           $('#alert-placeholder').html(
             '<div class="alert alert-danger" role="alert">' +
-            '<strong>Error:</strong> ' + errorMessage +
+            '<strong>Error:</strong><br>' + html +
             '</div>'
           );
           window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          // Si está habilitado el modo debug, mostrar panel y cargar logs
+          if (window.APP_DEBUG) {
+            const section = document.getElementById('debug-section');
+            const details = document.getElementById('error-details');
+            const logs = document.getElementById('debug-logs');
+            if (section) {
+              section.style.display = 'block';
+            }
+            if (details) {
+              // Mostrar más metadatos del XHR
+              const meta = {
+                url: actionUrl,
+                status: xhr.status,
+                statusText: xhr.statusText,
+                responseType: xhr.responseType,
+                readyState: xhr.readyState,
+              };
+              details.textContent = JSON.stringify(meta, null, 2);
+            }
+            if (logs) {
+              fetch('/debug/logs', { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+                .then(r => r.text())
+                .then(text => { logs.textContent = text; })
+                .catch(err => { logs.textContent = 'No se pudo cargar logs: ' + (err && err.message ? err.message : String(err)); });
+            }
+            const btnReload = document.getElementById('btn-recargar-logs');
+            if (btnReload) {
+              btnReload.onclick = function(){
+                fetch('/debug/logs', { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+                  .then(r => r.text())
+                  .then(text => { document.getElementById('debug-logs').textContent = text; })
+                  .catch(err => { document.getElementById('debug-logs').textContent = 'No se pudo cargar logs: ' + (err && err.message ? err.message : String(err)); });
+              };
+            }
+          }
         },
         complete: function() {
           btnEnviar.prop('disabled', false);

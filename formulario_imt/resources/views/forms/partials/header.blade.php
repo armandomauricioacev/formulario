@@ -354,5 +354,6 @@
   </script>
 </head>
 <body>
+  {{-- Botón de logs eliminado según solicitud del usuario --}}
   <main class="page">
     <div class="container">

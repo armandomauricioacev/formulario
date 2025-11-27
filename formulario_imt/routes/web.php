@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\FormularioController;
+use Illuminate\Support\Facades\Artisan;
 
 /**
  * Definición de rutas web para la Solicitud de Servicios IMT.
@@ -22,8 +23,8 @@ use App\Http\Controllers\FormularioController;
 |--------------------------------------------------------------------------
 */
 
-// Redirección raíz: facilita acceso directo al formulario
-Route::redirect('/', '/solicitud-servicios');
+// Página raíz: sirve directamente la vista principal del formulario
+Route::get('/', [FormularioController::class, 'index'])->name('home');
 
 // Vista principal del formulario de solicitud
 // Método: GET
@@ -43,6 +44,8 @@ Route::get('/solicitud', [FormularioController::class, 'index'])
 // Respuesta: JSON con éxito/mensaje
 Route::post('/solicitud/store', [FormularioController::class, 'store'])
     ->middleware('throttle:30,1') // 30 peticiones por minuto por IP
+    // Desactivar CSRF únicamente para este endpoint de envío
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
     ->name('solicitud.store');
 
 // Coordinación predeterminada para un servicio
@@ -69,3 +72,8 @@ Route::get('/solicitudes/data', [FormularioController::class, 'solicitudesData']
     ->middleware('throttle:60,1') // 60 peticiones por minuto por IP
     ->middleware('protect.solicitudes')
     ->name('solicitudes.data');
+
+// Debug y consola: registrar rutas solo en entorno local
+// Rutas de debug/console removidas por solicitud del usuario
+
+// Endpoint de refresco de configuración eliminado según solicitud del usuario
