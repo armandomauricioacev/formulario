@@ -133,9 +133,6 @@
           <div class="select-wrapper">
             <select class="form-control" id="entidad_procedencia" name="entidad_procedencia" onchange="handleEntidadChange()">
               <option value="" selected disabled>Selecciona la entidad</option>
-              @foreach($entidades as $entidad)
-                <option value="{{ $entidad->id }}">{{ $entidad->nombre }}</option>
-              @endforeach
               <option value="otra">Otra</option>
             </select>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -170,11 +167,6 @@
           <div class="select-wrapper">
             <select class="form-control" id="servicio" name="servicio" onchange="handleServicioChange()">
               <option value="" selected disabled>Selecciona el servicio</option>
-              @foreach($servicios as $servicio)
-                <option value="{{ $servicio->id }}" data-coordinacion="{{ $servicio->coordinacion_predeterminada_id }}">
-                  {{ $servicio->nombre }}
-                </option>
-              @endforeach
               <option value="otro">Otro</option>
             </select>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

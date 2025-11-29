@@ -23,20 +23,24 @@ use Illuminate\Support\Facades\Artisan;
 |--------------------------------------------------------------------------
 */
 
-// Página raíz: sirve directamente la vista principal del formulario
-Route::get('/', [FormularioController::class, 'index'])->name('home');
+// Página raíz: sirve directamente la vista principal del formulario (sin controlador)
+Route::get('/', function () {
+    return view('forms.solicitud-servicios');
+})->name('home');
 
-// Vista principal del formulario de solicitud
+// Vista principal del formulario de solicitud (sin controlador)
 // Método: GET
 // Respuesta: HTML (Blade)
-Route::get('/solicitud-servicios', [FormularioController::class, 'index'])
-    ->name('solicitud-servicios');
+Route::get('/solicitud-servicios', function () {
+    return view('forms.solicitud-servicios');
+})->name('solicitud-servicios');
 
-// Alias de la vista principal
+// Alias de la vista principal (sin controlador)
 // Método: GET
 // Respuesta: HTML (Blade)
-Route::get('/solicitud', [FormularioController::class, 'index'])
-    ->name('solicitud.index');
+Route::get('/solicitud', function () {
+    return view('forms.solicitud-servicios');
+})->name('solicitud.index');
 
 // Persistencia de una solicitud de servicio
 // Método: POST

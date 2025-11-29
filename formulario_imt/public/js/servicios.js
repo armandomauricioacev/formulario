@@ -211,6 +211,10 @@ export function initServicios() {
   const servicioSelect = document.getElementById('servicio');
   if (entidadSelect) entidadSelect.addEventListener('change', handleEntidadChange);
   if (servicioSelect) servicioSelect.addEventListener('change', handleServicioChange);
+
+  // Cargar catálogos dinámicamente por AJAX cuando la vista se sirve directamente
+  loadEntidades();
+  loadServicios();
 }
 
 document.addEventListener('DOMContentLoaded', initServicios);
@@ -221,3 +225,58 @@ window.validateEmail = validateEmail;
 window.handleEntidadChange = handleEntidadChange;
 window.handleServicioChange = handleServicioChange;
 window.validarFormulario = validarFormulario;
+
+// --- Helpers para cargar catálogos vía AJAX cuando la vista se sirve sin controlador ---
+async function fetchJson(url) {
+  try {
+    const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    return await resp.json();
+  } catch (e) {
+    console.error('[servicios.js] Error al consultar', url, e);
+    return null;
+  }
+}
+
+async function loadEntidades() {
+  const select = document.getElementById('entidad_procedencia');
+  if (!select) return;
+  const data = await fetchJson('/entidades');
+  if (!data || !Array.isArray(data)) return;
+  // Insertar antes de la opción "Otra"
+  const otraOption = Array.from(select.options).find(o => o.value === 'otra');
+  data.forEach(ent => {
+    const opt = document.createElement('option');
+    opt.value = ent.id;
+    opt.textContent = ent.nombre;
+    if (otraOption) {
+      select.insertBefore(opt, otraOption);
+    } else {
+      select.appendChild(opt);
+    }
+  });
+}
+
+async function loadServicios() {
+  const select = document.getElementById('servicio');
+  if (!select) return;
+  const data = await fetchJson('/servicios');
+  if (!data || !Array.isArray(data)) return;
+  const otroOption = Array.from(select.options).find(o => o.value === 'otro');
+  data.forEach(serv => {
+    const opt = document.createElement('option');
+    opt.value = serv.id;
+    opt.textContent = serv.nombre;
+    // mantener compatibilidad: data-coordinacion para handleServicioChange
+    if (serv.coordinacion_predeterminada_id !== undefined && serv.coordinacion_predeterminada_id !== null) {
+      opt.setAttribute('data-coordinacion', String(serv.coordinacion_predeterminada_id));
+    } else {
+      opt.setAttribute('data-coordinacion', '');
+    }
+    if (otroOption) {
+      select.insertBefore(opt, otroOption);
+    } else {
+      select.appendChild(opt);
+    }
+  });
+}
